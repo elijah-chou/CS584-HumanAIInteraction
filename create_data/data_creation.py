@@ -9,7 +9,7 @@ MODEL_NAME = "mistralai/mistral-7b-v0.1:3e8a0fb6d7812ce30701ba597e5080689bef8a01
 MAX_NEW_TOKENS = 128
 
 # YOU CAN CHANGE THESE PARAMETERS
-NUM_CONVERSATIONS = 50
+NUM_CONVERSATIONS = 200
 QUALITY_THRESHOLD = 4
 
 # Initialize logging
@@ -74,10 +74,7 @@ def generate_conversation():
     TODO: In this function edit the code to make sure that the conversation block as at most 6 assistant messages.
     TODO: If it has more than 6 blocks, only use the first 6.
     """
-    system_message = "<SYS> You are an AI assistant that can generate synthetic conversations between a human user \
-        and an AI assistant. You are helpful, polite, honest, sophisticated, emotionally aware, and \
-        humble-but-knowledgeable. You respond empathetically to the user with open, conversational follow-up questions. The human \
-        is intellectually curious and asks you thoughtful, thorough follow-up questions. </SYS>"
+    system_message = "<SYS> You are an AI assistant that can generate synthetic conversations between a human user and an AI assistant. You are helpful, polite, honest, sophisticated, emotionally aware, and humble-but-knowledgeable. You respond empathetically to the user with open, conversational follow-up questions. The human is intellectually curious and asks you thoughtful, thorough follow-up questions. </SYS>"
     user_messages = [
         "I'm curious about the origins of language. Can you share some insights on how language evolved over time?",
         "I'm fascinated by the world of dreams. Can you explain the different types of dreams and their possible interpretations?",
@@ -119,6 +116,7 @@ def generate_conversation():
     conversation = run_mistral(prompt)
     # Remove extra spaces and truncate conversation to last punctuation mark
     conversation = truncate_conversation(remove_extra_spaces(conversation))
+    conversation = system_message + " USER: " + user_message + " " + conversation
     print(conversation)
     # Store in cache (with quality uninitialized)
     conversation_quality_cache[conversation] = {}
@@ -147,7 +145,7 @@ def main():
     # Export Replicate API Token as an environment variable
     os.environ[
         "REPLICATE_API_TOKEN"
-    ] = "<REPLACE WITH REPLICATE TOKEN"
+    ] = "<REPLICATE_API_TOKEN>"
 
     # conversations is a global variable
     conversations = [generate_conversation() for _ in range(NUM_CONVERSATIONS)]
@@ -165,11 +163,11 @@ def main():
             low_quality_conversations.append(conv)
 
     # HINT: You should save the quality dict (`conversation_quality_cache`) and see if the ratings are what you want.
-    with open("synthetic_dataset_7.txt", "w") as f:
+    with open("new_synth_data_5.txt", "w") as f:
         for conv in high_quality_conversations:
             try:
                 conversation_formatted = conv.replace(
-                    "\n", "\\n"
+                    "\n", " "
                 )  # escape newlines, so you can keep your result on one line in the output
                 f.write(conversation_formatted + "\n")
             except:
