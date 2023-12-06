@@ -1,0 +1,1 @@
+This group project was a joint effort of Aditya Prakash, Rayvant Sahni, and myself. Aditya and I developed the code, and Rayvant was responsible for most of the user testing and final presentation.
